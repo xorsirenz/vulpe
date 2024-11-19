@@ -6,7 +6,7 @@ Discord bot written in python that impliments a reverse shell on unix-like syste
 Vulpe requires [discord.py](https://discordpy.readthedocs.io/en/stable/)
 
 ```bash
-pip install discord
+pip install -r requirements.txt
 ```
 
 ## `USAGE`
