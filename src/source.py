@@ -9,8 +9,8 @@ config = ConfigParser()
 def verify_config():
     if os.path.isfile('./src/settings.ini') != True:
         os.system('clear')
-        print(f"[!] Error loading settings.ini\n\n[-] Closing Vulpe..")
-        sys.exit(130)
+        print(f"[!] Error loading settings.ini\n")
+        shutdown()
 
 def init_launch():
     try:
@@ -28,8 +28,15 @@ def init_launch():
         return
     except (KeyError, ParsingError) as e:
         os.system('clear')
-        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n[-] Closing Vulpe..")
+        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
+        shutdown()
+
+def shutdown():
+    print("[x] Vulpe closed..")
+    try:
         sys.exit(130)
+    except SystemExit:
+        os._exit(130)
 
 def main():
     verify_config()

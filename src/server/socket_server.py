@@ -1,10 +1,10 @@
 import os
-import sys
 import socket
 import threading
 import time
 from configparser import ConfigParser, ParsingError
 from queue import Queue
+from src import source
 
 
 config = ConfigParser()
@@ -21,16 +21,13 @@ def socket_settings():
         config.read("./src/settings.ini")
         ss_settings = config['Socket_Server']
         host = ss_settings['host']
-        port = int(ss_settings['port'])
+        port = ss_settings['port']
         return host, port
     except (KeyError, ValueError, ParsingError) as e:
         os.system('clear')
-        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n[-] Closing Socket Sever..")
-        try:
-            sys.exit(130)
-        except SystemExit:
-            os._exit(130)
-    
+        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
+        source.shutdown()    
+
 def socket_server_thread():
     create_threads()
     create_jobs()
@@ -73,7 +70,7 @@ def socket_bind():
     try:
         host, port = socket_settings()
         global ss
-        ss.bind((host, port))
+        ss.bind((host, int(port)))
         ss.listen(5)
         print(f"[*] Listening on {host}:{port}")
     except socket.error as e:

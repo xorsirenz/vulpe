@@ -5,6 +5,7 @@ import threading
 import discord
 from discord.ext import commands
 from configparser import ConfigParser, ParsingError
+from src import source
 
 config = ConfigParser()
 
@@ -23,8 +24,8 @@ def discord_token():
         return token
     except (KeyError, ParsingError) as e:
         os.system('clear')
-        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n[-] Closing Vulpe..")
-        sys.exit(130)
+        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
+        source.shutdown()
 
 def discord_thread():
     dt = threading.Thread(target=run_bot)
