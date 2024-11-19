@@ -23,7 +23,6 @@ def init_launch():
                 config.write(config_file)
         return
     except (KeyError, ParsingError) as e:
-        os.system('clear')
         print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
         shutdown()
 
