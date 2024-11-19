@@ -1,4 +1,3 @@
-import os
 import socket
 import threading
 import time
@@ -24,7 +23,6 @@ def socket_settings():
         port = ss_settings['port']
         return host, port
     except (KeyError, ValueError, ParsingError) as e:
-        os.system('clear')
         print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
         source.shutdown()    
 
