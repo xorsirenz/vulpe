@@ -49,25 +49,25 @@ def run_bot():
     
     @bot.command(brief='// <extension>')
     async def load(ctx, extension):
-        await bot.load_extension(f'cogs.{extension}')
+        await bot.load_extension(f'src.cogs.{extension}')
         print(f'[+] Loaded extension: {extension}')
 
     @bot.command(brief='// <extension>')
     async def reload(ctx, extension):
-        await bot.unload_extension(f'cogs.{extension}')
-        await bot.load_extension(f'cogs.{extension}')
+        await bot.unload_extension(f'src.cogs.{extension}')
+        await bot.load_extension(f'src.cogs.{extension}')
         await ctx.message.delete()
         print(f'[*] Reloaded extension: {extension}')
 
     @bot.command(brief='// <extension>')
     async def unload(ctx, extension):
-        await bot.unload_extension(f'cogs.{extension}')
+        await bot.unload_extension(f'src.cogs.{extension}')
         print(f'[!] Unloaded extension: {extension}')
 
     async def load_ext():
-        for file in os.listdir('./cogs'):
+        for file in os.listdir('./src/cogs'):
             if file.endswith('.py'):
-                await bot.load_extension(f'cogs.{file[:-3]}')
+                await bot.load_extension(f'src.cogs.{file[:-3]}')
                 print(f'[+] loaded extension {file}')
 
     async def init_bot():

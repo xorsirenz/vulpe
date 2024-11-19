@@ -1,8 +1,8 @@
 import sys
 import os
 from configparser import ConfigParser, ParsingError
-from src.server.discord_server import discord_thread, new_token
-from src.server.socket_server import socket_server_thread
+from src.vulpebot import discord_thread, new_token
+from src.modules.socket_server import socket_server_thread
 
 config = ConfigParser()
 

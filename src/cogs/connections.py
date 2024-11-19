@@ -1,5 +1,5 @@
 from discord.ext import commands
-from src.server.socket_server import list_connections, get_target, send_target_commands 
+from src.modules.socket_server import list_connections, get_target, send_target_commands 
 
 CONNECTED = []
 
