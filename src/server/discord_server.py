@@ -20,7 +20,6 @@ def new_token():
         print('[*] Discord token added successfully')
         return token
     except (KeyError, ParsingError) as e:
-        os.system('clear')
         print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
         source.shutdown()
 
