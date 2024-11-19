@@ -27,13 +27,14 @@ def init_launch():
         shutdown()
 
 def shutdown():
-    print("[x] Vulpe closed..")
+    print("\n[x] Vulpe closed..")
     try:
         sys.exit(130)
     except SystemExit:
         os._exit(130)
 
 def main():
+    os.system('clear')
     verify_config()
     init_launch()
     discord_thread()
