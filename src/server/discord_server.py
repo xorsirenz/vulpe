@@ -1,6 +1,5 @@
 import asyncio
 import os
-import sys
 import threading
 import discord
 from discord.ext import commands
@@ -9,23 +8,29 @@ from src import source
 
 config = ConfigParser()
 
-def discord_token():
+def new_token():
     try:
         config.read("./src/settings.ini")
-        if config['Discord']['token'] == '':
-            token = input('[>] Enter discord bot token: ')
-            os.system('clear')
-            updated_token = config['Discord']
-            updated_token['token'] = token
-            with open('./src/settings.ini', 'w') as config_file:
-                config.write(config_file)
-            print('[*] Discord token added successfully')
-        token = config['Discord']['token']
+        token = input('[>] Enter discord bot token: ')
+        os.system('clear')
+        updated_token = config['Discord']
+        updated_token['token'] = token
+        with open('./src/settings.ini', 'w') as config_file:
+            config.write(config_file)
+        print('[*] Discord token added successfully')
         return token
     except (KeyError, ParsingError) as e:
         os.system('clear')
         print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
         source.shutdown()
+
+def load_token():
+    config.read("./src/settings.ini")
+    if config['Discord']['token'] != '':
+        token = config['Discord']['token']
+    else:
+        token = new_token()
+    return token
 
 def discord_thread():
     dt = threading.Thread(target=run_bot)
@@ -33,7 +38,7 @@ def discord_thread():
     dt.start()
 
 def run_bot():
-    token = discord_token()
+    token = load_token()
     intents = discord.Intents.default()
     intents.message_content = True
 
@@ -71,8 +76,9 @@ def run_bot():
             async with bot:
                 await load_ext()
                 await bot.start(token)
-        except asyncio.CancelledError as e:
-            print(f'\n[!] Cancel error: {e}')
+        except discord.LoginFailure as e:
+            print(f'\n[!] Vulpe Bot login error:\n{e}')
+            source.shutdown()
 
 
     asyncio.run(init_bot())
