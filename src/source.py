@@ -1,7 +1,7 @@
 import sys
 import os
 from configparser import ConfigParser, ParsingError
-from src.server.discord_server import discord_thread
+from src.server.discord_server import discord_thread, new_token
 from src.server.socket_server import socket_server_thread
 
 config = ConfigParser()
@@ -16,15 +16,11 @@ def init_launch():
     try:
         config.read("./src/settings.ini")
         if config['Init']['default'] == "True":
-            token = input('[>] Enter discord bot token: ')
-            os.system('clear')
-            updated_token = config['Discord']
-            updated_token['token'] = token
+            new_token()
             update_init = config['Init']
             update_init['default'] = 'False'
             with open('./src/settings.ini', 'w') as config_file:
                 config.write(config_file)
-            print('[*] Discord token added successfully')
         return
     except (KeyError, ParsingError) as e:
         os.system('clear')
