@@ -5,5 +5,4 @@ if __name__ == '__main__':
     try:
         source.main()
     except KeyboardInterrupt:
-        print(f"\n[-] Vulpe shutting down..")
         source.shutdown()
