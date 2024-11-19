@@ -8,7 +8,6 @@ config = ConfigParser()
 
 def verify_config():
     if os.path.isfile('./src/settings.ini') != True:
-        os.system('clear')
         print(f"[!] Error loading settings.ini\n")
         shutdown()
 
