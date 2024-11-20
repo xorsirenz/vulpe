@@ -1,12 +1,15 @@
+import discord
+from discord.app_commands import guilds
+from discord.client import Client
+from discord.ext import commands
 import asyncio
 import os
 import threading
-import discord
-from discord.ext import commands
 from configparser import ConfigParser, ParsingError
 from src import source
 
 config = ConfigParser()
+
 
 def new_token():
     try:
@@ -45,8 +48,19 @@ def run_bot():
 
     @bot.event
     async def on_ready():
-        print(f'\n[+] {bot.user} had successfully loaded\n[+] discord id: {bot.user.id}\n[>] ', end="")
-    
+        await bot.change_presence(
+                activity=discord.activity.Game(name="with IEDs"),
+                status=discord.Status.do_not_disturb)
+        output = f'\n[+] {bot.user} had successfully loaded'
+        output += f'\n[+] discord id: {bot.user.id}\n[>] '
+        print(output, end ="")
+
+    @bot.command()
+    @commands.is_owner()
+    async def logout(ctx):
+        await bot.logout()
+        source.shutdown()
+
     @bot.command(brief='// <extension>')
     async def load(ctx, extension):
         await bot.load_extension(f'src.cogs.{extension}')

