@@ -44,10 +44,13 @@ def run_bot():
     intents = discord.Intents.default()
     intents.message_content = True
 
-    bot = commands.Bot(command_prefix='-', intents=intents)
+    bot = commands.Bot(command_prefix='-', intents=intents, case_insensitive=True)
 
     @bot.event
     async def on_ready():
+        for guild in bot.guilds:
+            guild_id = guild.id
+            print(guild_id)
         await bot.change_presence(
                 activity=discord.activity.Game(name="with IEDs"),
                 status=discord.Status.do_not_disturb)
