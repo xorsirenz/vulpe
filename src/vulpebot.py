@@ -5,6 +5,7 @@ from discord.ext import commands
 import asyncio
 import os
 import threading
+import logging
 from configparser import ConfigParser, ParsingError
 from src import source
 
@@ -40,23 +41,24 @@ def discord_thread():
     dt.start()
 
 def run_bot():
-    token = load_token()
+    logging.basicConfig(level=logging.INFO)
     intents = discord.Intents.default()
     intents.message_content = True
 
     bot = commands.Bot(command_prefix='-', intents=intents, case_insensitive=True)
+    bot.config_token = load_token()
 
     @bot.event
     async def on_ready():
-        for guild in bot.guilds:
-            guild_id = guild.id
-            print(guild_id)
         await bot.change_presence(
                 activity=discord.activity.Game(name="with IEDs"),
                 status=discord.Status.do_not_disturb)
         output = f'\n[+] {bot.user} had successfully loaded'
-        output += f'\n[+] discord id: {bot.user.id}\n[>] '
-        print(output, end ="")
+        output += f'\n[+] discord bot id: {bot.user.id}'
+        print(output, end="")
+        for guild in bot.guilds:
+            guild_id = guild.id
+            print(f'\n[+] Guild id: {guild_id}\n[>] ', end="")
 
     @bot.command()
     @commands.is_owner()
@@ -91,7 +93,7 @@ def run_bot():
         try:
             async with bot:
                 await load_ext()
-                await bot.start(token)
+                await bot.start(bot.config_token)
         except discord.LoginFailure as e:
             print(f'\n[!] Vulpe Bot login error:\n{e}')
             source.shutdown()

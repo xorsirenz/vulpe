@@ -47,7 +47,7 @@ class Connections(commands.Cog):
                 downloads_channel = await ctx.guild.create_text_channel(name='downloads', category=self.bot.get_channel(category_id))
                 logs_channel = await ctx.guild.create_text_channel(name='logs', category=self.bot.get_channel(category_id))
                 print(terminal_channel)
-                await logs_channel.send(f"{format(ctx.message.author.mention)}\n[*] Connected to: {CONNECTED}")
+                await logs_channel.send(f"{ctx.author.mention}\n[*] Connected to: {CONNECTED}")
             else:
                 await ctx.send(f"[*] Connected to: {CONNECTED}")
         except Exception:

