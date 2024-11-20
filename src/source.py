@@ -65,6 +65,7 @@ def shutdown():
 
 def main():
     banner()
+    verify_config()
     init_launch()
     discord_thread()
     socket_server_thread()
