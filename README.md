@@ -10,11 +10,12 @@ python vulpe.py
 #
 ### `FEATURES:`
 ```python
-[>] -list       # gets list of connected clients
-[>] -connect    # connects directly to client for interaction
-[>] -cmd        # send any shell command
+[+] -list       # gets list of connected clients
+[+] -connect    # connects directly to client for interaction
+[+] -cmd        # send any shell command
+# more features are currently being worked on
 ```
-###### When connecting to a client for the first time, VulpeBot will create a unique discord category based on the clients HWID and related channels for the user to interact with the connected bot directly. It then will retrieve a set of base data from the connected client and send the data in a specific discord channel 
+##### When connecting to a client for the first time, VulpeBot will create a unique discord category based on the clients HWID and related channels for the user to interact with the connected bot directly. It then will retrieve a set of base data from the connected client and send the data in a specific discord channel 
 #
 ### `DONATIONS:`
 ###### [XMR](https://www.getmonero.org/):
