@@ -15,14 +15,14 @@ config = ConfigParser()
 def new_token():
     try:
         config.read("./src/settings.ini")
-        token = input('[>] Enter discord bot token: ')
+        new_token = input('[>] Enter discord bot token: ')
         os.system('clear')
         updated_token = config['Discord']
-        updated_token['token'] = token
+        updated_token['token'] = new_token
         with open('./src/settings.ini', 'w') as config_file:
             config.write(config_file)
         print('[*] Discord token added successfully')
-        return token
+        return new_token
     except (KeyError, ParsingError) as e:
         print(f"[!] Error loading token to settings.ini:\n[!] {e}\n\n")
         source.shutdown()
@@ -30,10 +30,10 @@ def new_token():
 def load_token():
     config.read("./src/settings.ini")
     if config['Discord']['token'] != '':
-        token = config['Discord']['token']
+        config_token = config['Discord']['token']
     else:
-        token = new_token()
-    return token
+        config_token = new_token()
+    return config_token
 
 def discord_thread():
     dt = threading.Thread(target=run_bot)
@@ -46,7 +46,7 @@ def run_bot():
     intents.message_content = True
 
     bot = commands.Bot(command_prefix='-', intents=intents, case_insensitive=True)
-    bot.config_token = load_token()
+    bot.token = load_token()
 
     @bot.event
     async def on_ready():
@@ -93,7 +93,7 @@ def run_bot():
         try:
             async with bot:
                 await load_ext()
-                await bot.start(bot.config_token)
+                await bot.start(bot.token)
         except discord.LoginFailure as e:
             print(f'\n[!] Vulpe Bot login error:\n{e}')
             source.shutdown()
