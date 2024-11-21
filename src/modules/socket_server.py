@@ -65,6 +65,7 @@ def socket_create():
         ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     except socket.error as e:
         print(f"\n[!] Socket creation error: {e}")
+        shutdown()
 
 def socket_bind():
     try:
@@ -75,8 +76,7 @@ def socket_bind():
         print(f"\n[*] Listening on {host}:{port}")
     except socket.error as e:
         print(f"\n[!] Socket binding error: {e}")
-        time.sleep(5)
-        socket_bind()
+        shutdown()
 
 def accept_connections():
     for c in CONNECTIONS:
