@@ -19,7 +19,7 @@ python vulpe.py
 #
 ### `DONATIONS`
 ###### [XMR](https://www.getmonero.org/):
-`
+```
 46pKz2HPheiEuaAKDrL8c8bMnR53C6jUwJ6RFB1ASzsHZo3JcfKJBwm5GFM6pwtoBYcioJV1L4g4P6QnaD9RS2VmMf5CaX9
-`
+```
 
